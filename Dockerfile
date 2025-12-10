@@ -12,24 +12,27 @@ COPY . .
 
 RUN CGO_ENABLED=1 GOOS=linux go build -a -o meow ./cmd/meow
 
-# Runtime stage
-FROM alpine:latest
+# Runtime stage - use debian for better compatibility with bun
+FROM debian:bookworm-slim
 
-# Install dependencies including nodejs (for yt-dlp JavaScript runtime)
-RUN apk add --no-cache \
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
-    opus \
+    libopus0 \
     python3 \
-    py3-pip \
+    python3-pip \
     ca-certificates \
-    nodejs \
-    npm \
-    bash \
+    curl \
+    unzip \
     && pip3 install --break-system-packages yt-dlp \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Verify node works
-RUN node --version
+# Install bun
+RUN curl -fsSL https://bun.sh/install | bash \
+    && mv /root/.bun/bin/bun /usr/local/bin/
+
+# Verify bun works
+RUN bun --version
 
 WORKDIR /app
 
