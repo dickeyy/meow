@@ -15,7 +15,7 @@ RUN CGO_ENABLED=1 GOOS=linux go build -a -o meow ./cmd/meow
 # Runtime stage
 FROM alpine:latest
 
-# Install dependencies including deno
+# Install dependencies
 RUN apk add --no-cache \
     ffmpeg \
     opus \
@@ -25,14 +25,17 @@ RUN apk add --no-cache \
     curl \
     unzip \
     bash \
+    gcompat \
     && pip3 install --break-system-packages yt-dlp \
     && rm -rf /var/cache/apk/*
 
-# Install deno properly
-RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh \
-    && chmod +x /usr/local/bin/deno
+# Install deno (download binary directly for Alpine)
+RUN curl -fsSL https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip -o /tmp/deno.zip \
+    && unzip /tmp/deno.zip -d /usr/local/bin \
+    && chmod +x /usr/local/bin/deno \
+    && rm /tmp/deno.zip
 
-# Verify deno is installed
+# Verify deno works
 RUN deno --version
 
 WORKDIR /app
