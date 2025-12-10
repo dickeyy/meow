@@ -9,9 +9,10 @@ services:
             - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
             - POSTGRES_URL=postgres://meow:meow@postgres:5432/meow
             - REDIS_URL=redis://redis:6379
-            - YOUTUBE_COOKIES_PATH=/app/cookies.txt
+            - YOUTUBE_COOKIES_PATH=/app/data/cookies.txt
         volumes:
-            - ./cookies.txt:/app/cookies.txt:ro
+            - ./cookies.txt:/app/cookies-source.txt:ro
+            - meow_data:/app/data
         depends_on:
             postgres:
                 condition: service_healthy
@@ -52,6 +53,7 @@ services:
 volumes:
     postgres_data:
     redis_data:
+    meow_data:
 
 networks:
     meow-network:

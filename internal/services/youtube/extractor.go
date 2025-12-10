@@ -88,10 +88,11 @@ func (e *Extractor) runCommand(args ...string) ([]byte, error) {
 
 	// Base arguments to help avoid YouTube bot detection
 	baseArgs := []string{
-		"--extractor-args", "youtube:player_client=web,default",
+		"--extractor-args", "youtube:player_client=ios,web",
 		"--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 		"--no-check-certificates",
 		"--geo-bypass",
+		"--no-update",
 	}
 
 	// Add cookies if available
@@ -126,7 +127,7 @@ func (e *Extractor) runCommand(args ...string) ([]byte, error) {
 func (e *Extractor) extractSingle(url string, requestedBy string) (*audio.Track, error) {
 	output, err := e.runCommand(
 		"-j",
-		"-f", "bestaudio[ext=m4a]/bestaudio/best",
+		"-f", "bestaudio/best",
 		"--no-playlist",
 		url,
 	)
@@ -197,7 +198,7 @@ func (e *Extractor) GetStreamURL(track *audio.Track) (string, error) {
 	fmt.Printf("[yt-dlp] Getting stream URL for: %s\n", url)
 
 	output, err := e.runCommand(
-		"-f", "bestaudio[ext=m4a]/bestaudio/best",
+		"-f", "bestaudio/best",
 		"-g",
 		"--no-playlist",
 		url,
@@ -266,7 +267,7 @@ func (e *Extractor) Search(query string, requestedBy string) (*audio.Track, erro
 
 	output, err := e.runCommand(
 		"-j",
-		"-f", "bestaudio[ext=m4a]/bestaudio/best",
+		"-f", "bestaudio/best",
 		"--no-playlist",
 		"--default-search", "ytsearch",
 		"--match-filter", "!is_live",

@@ -15,6 +15,7 @@ RUN CGO_ENABLED=1 GOOS=linux go build -a -o meow ./cmd/meow
 # Runtime stage
 FROM alpine:latest
 
+# Install dependencies including deno
 RUN apk add --no-cache \
     ffmpeg \
     opus \
@@ -23,14 +24,24 @@ RUN apk add --no-cache \
     ca-certificates \
     curl \
     unzip \
+    bash \
     && pip3 install --break-system-packages yt-dlp \
     && rm -rf /var/cache/apk/*
 
-# Install deno (JavaScript runtime required by yt-dlp for YouTube)
-RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
+# Install deno properly
+RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh \
+    && chmod +x /usr/local/bin/deno
+
+# Verify deno is installed
+RUN deno --version
 
 WORKDIR /app
 
-COPY --from=builder /app/meow .
+# Create data directory for writable cookies
+RUN mkdir -p /app/data
 
-CMD ["./meow"]
+COPY --from=builder /app/meow .
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
