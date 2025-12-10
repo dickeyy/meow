@@ -14,9 +14,9 @@ fi
 # Load environment variables
 export $(grep -v '^#' .env | xargs)
 
-# Set local database URLs if not set
-export POSTGRES_URL="${POSTGRES_URL:-postgres://meow:meow@localhost:5432/meow}"
-export REDIS_URL="${REDIS_URL:-redis://localhost:6379}"
+# Set local database URLs if not set (using non-standard ports to avoid conflicts)
+export POSTGRES_URL="${POSTGRES_URL:-postgres://meow:meow@localhost:5433/meow}"
+export REDIS_URL="${REDIS_URL:-redis://localhost:6380}"
 
 # Set cookies path if file exists
 if [ -f cookies.txt ]; then

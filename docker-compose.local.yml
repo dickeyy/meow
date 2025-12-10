@@ -9,9 +9,9 @@ services:
       - POSTGRES_PASSWORD=meow
       - POSTGRES_DB=meow
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - meow_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U meow"]
       interval: 5s
@@ -21,9 +21,9 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
-      - redis_data:/data
+      - meow_redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -31,6 +31,5 @@ services:
       retries: 5
 
 volumes:
-  postgres_data:
-  redis_data:
-
+  meow_postgres_data:
+  meow_redis_data:
