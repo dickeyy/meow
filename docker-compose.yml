@@ -1,0 +1,56 @@
+services:
+  meow:
+    build: .
+    env_file:
+      - .env
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - POSTGRES_URL=postgres://meow:meow@postgres:5432/meow
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - meow-network
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=meow
+      - POSTGRES_PASSWORD=meow
+      - POSTGRES_DB=meow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meow-network
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meow-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  meow-network:
+    driver: bridge
+
