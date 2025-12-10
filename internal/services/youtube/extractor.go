@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -18,12 +19,26 @@ var (
 	playlistRegex = regexp.MustCompile(`[?&]list=([a-zA-Z0-9_-]+)`)
 )
 
-const commandTimeout = 30 * time.Second
+const commandTimeout = 60 * time.Second
 
-type Extractor struct{}
+type Extractor struct {
+	cookiesPath string
+}
 
 func NewExtractor() *Extractor {
 	return &Extractor{}
+}
+
+func NewExtractorWithCookies(cookiesPath string) *Extractor {
+	// Verify cookies file exists
+	if cookiesPath != "" {
+		if _, err := os.Stat(cookiesPath); err != nil {
+			fmt.Printf("[yt-dlp] Warning: cookies file not found at %s\n", cookiesPath)
+			return &Extractor{}
+		}
+		fmt.Printf("[yt-dlp] Using cookies from: %s\n", cookiesPath)
+	}
+	return &Extractor{cookiesPath: cookiesPath}
 }
 
 type ytdlpOutput struct {
@@ -77,6 +92,11 @@ func (e *Extractor) runCommand(args ...string) ([]byte, error) {
 		"--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 		"--no-check-certificates",
 		"--geo-bypass",
+	}
+
+	// Add cookies if available
+	if e.cookiesPath != "" {
+		baseArgs = append(baseArgs, "--cookies", e.cookiesPath)
 	}
 
 	fullArgs := append(baseArgs, args...)
@@ -244,8 +264,6 @@ func (e *Extractor) enrichTrackMetadata(track *audio.Track) {
 func (e *Extractor) Search(query string, requestedBy string) (*audio.Track, error) {
 	fmt.Printf("[yt-dlp] Searching for: %s\n", query)
 
-	// Use YouTube Music search for better audio-only results
-	// Falls back to regular YouTube search if ytmusic fails
 	output, err := e.runCommand(
 		"-j",
 		"-f", "bestaudio[ext=m4a]/bestaudio/best",

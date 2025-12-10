@@ -14,6 +14,7 @@ type Config struct {
 	SpotifyClientSecret string
 	PostgresURL         string
 	RedisURL            string
+	YouTubeCookiesPath  string
 	DefaultVolume       int
 }
 
@@ -29,6 +30,7 @@ func Load() (*Config, error) {
 		SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
 		PostgresURL:         os.Getenv("POSTGRES_URL"),
 		RedisURL:            os.Getenv("REDIS_URL"),
+		YouTubeCookiesPath:  os.Getenv("YOUTUBE_COOKIES_PATH"),
 		DefaultVolume:       50,
 	}
 

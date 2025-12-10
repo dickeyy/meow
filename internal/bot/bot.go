@@ -43,7 +43,7 @@ func New(ctx context.Context, cfg *config.Config) (*Bot, error) {
 		config:   cfg,
 		ctx:      ctx,
 		sessions: make(map[string]*audio.Session),
-		youtube:  youtube.NewExtractor(),
+		youtube:  youtube.NewExtractorWithCookies(cfg.YouTubeCookiesPath),
 		artwork:  artwork.NewITunesClient(),
 	}
 
