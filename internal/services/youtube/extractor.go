@@ -71,7 +71,16 @@ func (e *Extractor) runCommand(args ...string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), commandTimeout)
 	defer cancel()
 
-	cmd := exec.CommandContext(ctx, "yt-dlp", args...)
+	// Base arguments to help avoid YouTube bot detection
+	baseArgs := []string{
+		"--extractor-args", "youtube:player_client=web,default",
+		"--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+		"--no-check-certificates",
+		"--geo-bypass",
+	}
+
+	fullArgs := append(baseArgs, args...)
+	cmd := exec.CommandContext(ctx, "yt-dlp", fullArgs...)
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout

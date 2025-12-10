@@ -21,8 +21,13 @@ RUN apk add --no-cache \
     python3 \
     py3-pip \
     ca-certificates \
+    curl \
+    unzip \
     && pip3 install --break-system-packages yt-dlp \
     && rm -rf /var/cache/apk/*
+
+# Install deno (JavaScript runtime required by yt-dlp for YouTube)
+RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
 
 WORKDIR /app
 
