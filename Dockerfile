@@ -1,7 +1,11 @@
-# Build stage
-FROM golang:1.23-alpine AS builder
+# Build stage - use Debian to match runtime
+FROM golang:1.23-bookworm AS builder
 
-RUN apk add --no-cache git gcc musl-dev opus-dev
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    gcc \
+    libopus-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -12,7 +16,7 @@ COPY . .
 
 RUN CGO_ENABLED=1 GOOS=linux go build -a -o meow ./cmd/meow
 
-# Runtime stage - use debian for better compatibility with bun
+# Runtime stage
 FROM debian:bookworm-slim
 
 # Install dependencies
