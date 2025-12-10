@@ -25,18 +25,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libopus0 \
     python3 \
     python3-pip \
+    python3-venv \
     ca-certificates \
     curl \
     unzip \
-    && pip3 install --break-system-packages yt-dlp \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install bun
-RUN curl -fsSL https://bun.sh/install | bash \
-    && mv /root/.bun/bin/bun /usr/local/bin/
+# Install bun globally
+ENV BUN_INSTALL="/usr/local"
+RUN curl -fsSL https://bun.sh/install | bash
 
-# Verify bun works
-RUN bun --version
+# Verify bun is in path
+RUN echo "Bun version:" && /usr/local/bin/bun --version
+
+# Install latest yt-dlp from pip (nightly has better YouTube support)
+RUN pip3 install --break-system-packages -U "yt-dlp[default]"
+
+# Verify yt-dlp version
+RUN yt-dlp --version
+
+# Make sure bun is in PATH for all processes
+ENV PATH="/usr/local/bin:${PATH}"
 
 WORKDIR /app
 
