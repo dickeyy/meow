@@ -48,7 +48,7 @@ fi
 
 # Install yt-dlp
 echo "[5/7] Installing/updating yt-dlp..."
-pip3 install --user -U "yt-dlp[default]"
+pip3 install --user --break-system-packages -U "yt-dlp[default]"
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 export PATH="$HOME/.local/bin:$PATH"
 
