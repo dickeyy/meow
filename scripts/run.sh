@@ -38,6 +38,5 @@ if [ ! -f meow ] || [ "$(find . -name '*.go' -newer meow 2>/dev/null | head -1)"
     go build -o meow ./cmd/meow
 fi
 
-echo "Starting Meow..."
-./meow
+echo "You can now start the bot by running ./meow"
 
