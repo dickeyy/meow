@@ -1,6 +1,6 @@
 module github.com/dickeyy/meow
 
-go 1.23
+go 1.23.0
 
 require (
 	github.com/bwmarrin/discordgo v0.28.1
@@ -8,7 +8,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/zmb3/spotify/v2 v2.4.3
-	golang.org/x/oauth2 v0.24.0
+	golang.org/x/oauth2 v0.27.0
 	layeh.com/gopus v0.0.0-20210501142526-1ee02d434e32
 )
 
