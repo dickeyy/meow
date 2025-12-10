@@ -93,6 +93,7 @@ func (e *Extractor) runCommand(args ...string) ([]byte, error) {
 		"--no-check-certificates",
 		"--geo-bypass",
 		"--no-update",
+		"--js-runtimes", "nodejs",
 	}
 
 	// Add cookies if available

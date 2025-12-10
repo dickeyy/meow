@@ -15,28 +15,21 @@ RUN CGO_ENABLED=1 GOOS=linux go build -a -o meow ./cmd/meow
 # Runtime stage
 FROM alpine:latest
 
-# Install dependencies
+# Install dependencies including nodejs (for yt-dlp JavaScript runtime)
 RUN apk add --no-cache \
     ffmpeg \
     opus \
     python3 \
     py3-pip \
     ca-certificates \
-    curl \
-    unzip \
+    nodejs \
+    npm \
     bash \
-    gcompat \
     && pip3 install --break-system-packages yt-dlp \
     && rm -rf /var/cache/apk/*
 
-# Install deno (download binary directly for Alpine)
-RUN curl -fsSL https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip -o /tmp/deno.zip \
-    && unzip /tmp/deno.zip -d /usr/local/bin \
-    && chmod +x /usr/local/bin/deno \
-    && rm /tmp/deno.zip
-
-# Verify deno works
-RUN deno --version
+# Verify node works
+RUN node --version
 
 WORKDIR /app
 
